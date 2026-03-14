@@ -44,7 +44,7 @@ public:
         int rootA=find(a);
         int rootB=find(b);
         if(rootA==rootB)return false; // 請修改
-        if(ramkv[rootA]<rankv[rootB]){parent[rootA]=rootB;}
+        if(rankv[rootA]<rankv[rootB]){parent[rootA]=rootB;}
         else if(rankv[rootA]>rankv[rootB]){parent[rootB]=rootA;}
         else {
             parent[rootB]=rootA;
@@ -84,10 +84,14 @@ void kruskalMST(int n, vector<Edge> edges) {
 
     // TODO:
     // Step 1. 將 edges 依照權重由小到大排序
-
+    sort(edges.begin(), edges.end(), [](Edge a, Edge b) {
+        return a.w < b.w;
+    });
     // TODO:
     // Step 2. 建立 DSU 物件
-
+    DSU dsu(n);
+    //vector<Edge> mst;
+    
     cout << "Selection steps:\n";
 
     // TODO:
@@ -95,7 +99,14 @@ void kruskalMST(int n, vector<Edge> edges) {
     //   - 若加入後不形成 cycle，則選入 mst
     //   - 否則略過
     //   - 當 mst.size() == n - 1 時停止
-
+    for (const auto& e : edges) {
+        if (dsu.unite(e.u, e.v)) { // 如果合併成功（無環）
+            mst.push_back(e);
+            printEdge(e); cout << " (selected)\n";
+            if (mst.size() == n - 1) break; // 邊夠了就收工
+        }
+    }
+    
     printMST(mst);
     cout << "\n";
 }
@@ -121,10 +132,16 @@ void primMST(int n, const vector<vector<pair<int, int>>>& adj, int start = 1) {
 
     // TODO:
     // Step 1. 將起點 start 設為已加入 MST
-
+    
     // TODO:
     // Step 2. 把 start 相鄰的邊放入 priority queue
 
+
+    inMST[start] = true;
+    for (auto& neighbor : adj[start]) {
+        pq.push({neighbor.second, start, neighbor.first});
+    }
+    
     cout << "Selection steps:\n";
 
     // TODO:
@@ -134,6 +151,21 @@ void primMST(int n, const vector<vector<pair<int, int>>>& adj, int start = 1) {
     //   - 否則加入此邊到 mst，並把新頂點標記進 MST
     //   - 再將新頂點可到達的候選邊放入 pq
 
+    while (!pq.empty() && mst.size() < n - 1) {
+        auto [w, u, v] = pq.top(); pq.pop();
+
+        if (inMST[v]) continue; // 已經在領土內了，跳過
+
+        inMST[v] = true;
+        mst.push_back({u, v, w});
+        
+        for (auto& next : adj[v]) {
+            if (!inMST[next.first]) {
+                pq.push({next.second, v, next.first});
+            }
+        }
+    }
+    
     printMST(mst);
     cout << "\n";
 }
@@ -146,6 +178,8 @@ void boruvkaMST(int n, const vector<Edge>& edges) {
     cout << "Sollin / Boruvka Algorithm\n";
     cout << "==============================\n";
 
+    DSU dsu(n);//
+    
     vector<Edge> mst;
 
     // TODO:
@@ -169,6 +203,15 @@ void boruvkaMST(int n, const vector<Edge>& edges) {
         //   若 set1 == set2，代表同一 component，跳過
         //   否則更新 cheapest[set1] 與 cheapest[set2]
 
+        for (int i = 0; i < edges.size(); i++) {
+            int set1 = dsu.find(edges[i].u);
+            int set2 = dsu.find(edges[i].v);
+            if (set1 == set2) continue;
+
+            if (cheapest[set1] == -1 || edges[i].w < edges[cheapest[set1]].w) cheapest[set1] = i;
+            if (cheapest[set2] == -1 || edges[i].w < edges[cheapest[set2]].w) cheapest[set2] = i;
+        }
+        
         bool merged = false;
 
         // TODO:
@@ -178,6 +221,17 @@ void boruvkaMST(int n, const vector<Edge>& edges) {
         //   - numComponents--
         //   - merged = true
 
+        for (int i = 1; i <= n; i++) {
+            if (cheapest[i] != -1) {
+                Edge e = edges[cheapest[i]];
+                if (dsu.unite(e.u, e.v)) {
+                    mst.push_back(e);
+                    numComponents--;
+                    merged = true;
+                }
+            }
+        }
+        
         if (!merged) break;
 
         cout << "\n";
