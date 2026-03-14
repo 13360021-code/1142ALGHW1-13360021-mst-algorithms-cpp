@@ -30,7 +30,9 @@ public:
         // 1. 若 parent[x] != x，遞迴尋找根
         // 2. 可加入 path compression
         // 3. 回傳集合代表元
-        return x; // 請修改
+        
+        if(parent[x]==x)return x;
+        return parent[x] = find(parent[x]);// 請修改
     }
 
     bool unite(int a, int b) {
@@ -38,7 +40,17 @@ public:
         // 1. 找 a, b 的根
         // 2. 若相同代表已在同一集合，回傳 false
         // 3. 否則合併兩集合，回傳 true
-        return false; // 請修改
+
+        int rootA=find(a);
+        int rootB=find(b);
+        if(rootA==rootB)return false; // 請修改
+        if(ramkv[rootA]<rankv[rootB]){parent[rootA]=rootB;}
+        else if(rankv[rootA]>rankv[rootB]){parent[rootB]=rootA;}
+        else {
+            parent[rootB]=rootA;
+            rankv[rootA]++;
+        }
+        return true;
     }
 };
 
