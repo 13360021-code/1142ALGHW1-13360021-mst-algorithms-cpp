@@ -248,10 +248,14 @@ void boruvkaMST(int n, const vector<Edge>& edges) {
 // 主程式
 // ==============================
 int main() {
-    int n = 6;
+    int n = 7;
 
     // 圖中的無向邊
-    vector<Edge> edges = {
+    //==============
+    //Quotation 5
+    //==============
+
+   vector<Edge> edges = {
         {1, 2, 16},
         {1, 5, 19},
         {5, 4, 18},
@@ -263,7 +267,12 @@ int main() {
         {6, 2, 12},
         {6, 4, 14}
     };
-   /*vector<Edge> edges = {
+
+    //=============
+    //Quotation 6
+    //=============
+   /*
+   vector<Edge> edges = {
         {1, 2, 28},
         {1, 6, 10},
         {2, 3, 16},
