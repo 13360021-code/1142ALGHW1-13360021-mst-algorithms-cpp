@@ -158,7 +158,8 @@ void primMST(int n, const vector<vector<pair<int, int>>>& adj, int start = 1) {
 
         inMST[v] = true;
         mst.push_back({u, v, w});
-        
+        cout << "Selected: "; printEdge({ u, v, w }); cout << "\n";
+
         for (auto& next : adj[v]) {
             if (!inMST[next.first]) {
                 pq.push({next.second, v, next.first});
@@ -226,6 +227,7 @@ void boruvkaMST(int n, const vector<Edge>& edges) {
                 Edge e = edges[cheapest[i]];
                 if (dsu.unite(e.u, e.v)) {
                     mst.push_back(e);
+                    cout << "Merged component " << i << " using edge: "; printEdge(e); cout << "\n";
                     numComponents--;
                     merged = true;
                 }
