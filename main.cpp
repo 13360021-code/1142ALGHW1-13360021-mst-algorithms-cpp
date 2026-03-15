@@ -263,7 +263,17 @@ int main() {
         {6, 2, 12},
         {6, 4, 14}
     };
-
+   /*vector<Edge> edges = {
+        {1, 2, 28},
+        {1, 6, 10},
+        {2, 3, 16},
+        {2, 7, 14},
+        {3, 4, 12},
+        {4, 5, 22},
+        {4, 7, 18},
+        {5, 6, 25},
+        {5, 7, 24}
+    };*/
     // adjacency list，供 Prim 使用
     vector<vector<pair<int, int>>> adj(n + 1);
     for (const auto& e : edges) {
